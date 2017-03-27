@@ -3,6 +3,10 @@
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
 		var api = easemobim.api;
+		var recentTextMsg = [];
+		window.grm = function(){
+			console.log(recentTextMsg);
+		};
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -17,7 +21,6 @@
 		easemobim.dragHeader = document.getElementById('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
 		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
-		easemobim.swfupload = null; //flash 上传
 
 		// todo: 把dom都移到里边
 		var doms = {
@@ -736,7 +739,7 @@
 					var msg = new WebIM.message.txt();
 					msg.set({ msg: word });
 					// 显示下班提示语
-					this.appendMsg(config.toUser, config.user.username, msg);
+					this.appendMsg(config.toUser, msg);
 					// 禁用工具栏
 					utils.addClass(easemobim.send, 'em-widget-send-disable');
 					// 发送按钮去掉连接中字样
@@ -744,7 +747,7 @@
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面
-					easemobim.leaveMessage.show(!config.isInOfficehours);
+					easemobim.leaveMessage.show({hideCloseBtn: true});
 					break;
 				}
 			},
@@ -938,7 +941,7 @@
 							tenantId: config.tenantId,
 							visitor_user_id: config.visitorUserId,
 							agentId: config.agentUserId,
-							content: msg.slice(0, _const.MESSAGE_PREDICT_MAX_LENGTH),
+							content: utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH),
 							timestamp: _.now(),
 						});
 				}, 1000);
@@ -1122,82 +1125,79 @@
 				}
 			},
 			handleEventStatus: function (action, info, robertToHubman) {
-					var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
-					if (!res) {
-						// 显示无坐席在线
-						// 每次激活只显示一次
-						if (!this.noteShow) {
-							this.noteShow = true;
-							this.appendEventMsg(_const.eventMessageText.NOTE);
-						}
-					}
-
-					if (action === 'reply' && info) {
-
-						if (config.agentUserId) {
-							this.startToGetAgentStatus();
-						}
-
-						this.setAgentProfile({
-							userNickname: info.userNickname,
-							avatar: info.avatar
-						});
-					}
-					else if (action === 'create') { //显示会话创建
-						this.appendEventMsg(_const.eventMessageText.CREATE);
-					}
-					else if (action === 'close') { //显示会话关闭
-						this.appendEventMsg(_const.eventMessageText.CLOSED);
-					}
-					else if (action === 'transferd') { //显示转接到客服
-						this.appendEventMsg(_const.eventMessageText.TRANSFER);
-					}
-					else if (action === 'transfering') { //显示转接中
-						this.appendEventMsg(_const.eventMessageText.TRANSFERING);
-					}
-					else if (action === 'linked') { //接入成功
-						this.appendEventMsg(_const.eventMessageText.LINKED);
-					}
-
-					if (action === 'transferd' || action === 'linked') {
-						//坐席发生改变
-						this.handleAgentStatusChanged(info);
+				var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
+				if (!res) {
+					// 显示无坐席在线
+					// 每次激活只显示一次
+					if (!this.noteShow) {
+						this.noteShow = true;
+						this.appendEventMsg(_const.eventMessageText.NOTE);
 					}
 				}
-				//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
-				,
-			handleAgentStatusChanged: function (info) {
-					if (!info) return;
 
-					config.agentUserId = info.userId;
+				if (action === 'reply' && info) {
 
-					this.updateAgentStatus();
-					this.startToGetAgentStatus();
+					if (config.agentUserId) {
+						this.startToGetAgentStatus();
+					}
 
-					//更新头像和昵称
 					this.setAgentProfile({
-						userNickname: info.agentUserNiceName,
+						userNickname: info.userNickname,
 						avatar: info.avatar
 					});
 				}
-				//转接中排队中等提示上屏
-				,
-			appendEventMsg: function (msg) {
-					//如果设置了hideStatus, 不显示转接中排队中等提示
-					if (config.hideStatus) return;
-
-					var dom = document.createElement('div');
-
-					dom.innerText = msg;
-					dom.className = 'em-widget-event';
-
-					this.appendDate(new Date().getTime());
-					doms.chatWrapper.appendChild(dom);
-					this.scrollBottom(utils.isMobile ? 800 : null);
+				else if (action === 'create') { //显示会话创建
+					this.appendEventMsg(_const.eventMessageText.CREATE);
 				}
-				//消息上屏
-				,
-			appendMsg: function (from, to, msg, isHistory) {
+				else if (action === 'close') { //显示会话关闭
+					this.appendEventMsg(_const.eventMessageText.CLOSED);
+				}
+				else if (action === 'transferd') { //显示转接到客服
+					this.appendEventMsg(_const.eventMessageText.TRANSFER);
+				}
+				else if (action === 'transfering') { //显示转接中
+					this.appendEventMsg(_const.eventMessageText.TRANSFERING);
+				}
+				else if (action === 'linked') { //接入成功
+					this.appendEventMsg(_const.eventMessageText.LINKED);
+				}
+
+				if (action === 'transferd' || action === 'linked') {
+					//坐席发生改变
+					this.handleAgentStatusChanged(info);
+				}
+			},
+			//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
+			handleAgentStatusChanged: function (info) {
+				if (!info) return;
+
+				config.agentUserId = info.userId;
+
+				this.updateAgentStatus();
+				this.startToGetAgentStatus();
+
+				//更新头像和昵称
+				this.setAgentProfile({
+					userNickname: info.agentUserNiceName,
+					avatar: info.avatar
+				});
+			},
+			//转接中排队中等提示上屏
+			appendEventMsg: function (msg) {
+				//如果设置了hideStatus, 不显示转接中排队中等提示
+				if (config.hideStatus) return;
+
+				var dom = document.createElement('div');
+
+				dom.innerText = msg;
+				dom.className = 'em-widget-event';
+
+				this.appendDate(new Date().getTime());
+				doms.chatWrapper.appendChild(dom);
+				this.scrollBottom(utils.isMobile ? 800 : null);
+			},
+			//消息上屏
+			appendMsg: function (from, msg, isHistory) {
 				var me = this;
 				var isReceived = !(
 					from
@@ -1224,50 +1224,54 @@
 					curWrapper.appendChild(dom);
 					me.scrollBottom(utils.isMobile ? 800 : null);
 				}
+				// 缓存上屏的消息
+				var msgData = {from: from, msg: msg};
+				isHistory ? recentTextMsg.push(msgData) : recentTextMsg.unshift(msgData);
 			},
 			messagePrompt: function (message) {
-					if (utils.isTop) return;
+				if (utils.isTop) return;
 
-					var me = this;
-					var tmpVal;
-					var brief;
-					switch (message.type) {
-					case 'txt':
-					case 'list':
-						tmpVal = message.value.replace(/\n/mg, '');
-						brief = tmpVal.length > 15 ? tmpVal.slice(0, 15) + '...' : tmpVal;
-						break;
-					case 'img':
-						brief = '[图片]';
-						break;
-					case 'file':
-						brief = '[文件]';
-						break;
-					default:
-						brief = '';
-					}
-
-					if (me.opened) {
-						transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
-					}
-
-					if (utils.isMin() || !me.opened) {
-						me.soundReminder();
-						transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
-						transfer.send({
-							event: _const.EVENTS.NOTIFY,
-							data: {
-								avatar: this.currentAvatar,
-								title: '新消息',
-								brief: brief
-							}
-						}, window.transfer.to);
-					}
+				var me = this;
+				var tmpVal;
+				var brief;
+				switch (message.type) {
+				case 'txt':
+				case 'list':
+					tmpVal = message.value.replace(/\n/mg, '');
+					brief = utils.getBrief(tmpVal, 15);
+					break;
+				case 'img':
+					brief = '[图片]';
+					break;
+				case 'file':
+					brief = '[文件]';
+					break;
+				default:
+					brief = '';
 				}
-				//receive message function
-				,
+
+				if (me.opened) {
+					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+				}
+
+				if (utils.isMin() || !me.opened) {
+					me.soundReminder();
+					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
+					transfer.send({
+						event: _const.EVENTS.NOTIFY,
+						data: {
+							avatar: this.currentAvatar,
+							title: '新消息',
+							brief: brief
+						}
+					}, window.transfer.to);
+				}
+			},
 			receiveMsg: function (msg, type, isHistory) {
 				this.channel.handleReceive(msg, type, isHistory);
+			},
+			getRecentTextMsg: function(){
+				// 
 			}
 		};
 	};

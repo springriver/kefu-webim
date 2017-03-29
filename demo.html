@@ -21,11 +21,11 @@
 	<br><br><br><br><br><br><br>
 
 	<a href='javascript:;' onclick='easemobim.bind({
-		tenantId: 10954,
+		tenantId: 27801,
 		dialogWidth: "500px"
 	})'>窗口加宽示例</a>
 	<a href='javascript:;' onclick='easemobim.bind({
-		tenantId: 10954,
+		tenantId: 27801,
         emgroup: "技能组1"
 	})'>绑定技能组示例</a>
 
@@ -53,18 +53,24 @@
 	window.easemobim = window.easemobim || {};
 
 easemobim.config = {
-	// domain: '//sandbox5.kefu.easemob.com',
+	 domain: '//kefu.jx.zto.com',
 	// domain: '//kefu.easemob.com',
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
 	// hide: false,
 	// minimum: false,
-	tenantId: 11885,
-	unused: ''
+	tenantId: '27801',
+	unused: '',
+    //自己服务器上im.html文件的路径
+    path: '//10.10.19.112:8080/kefu-webim',
+    //访客插件static的路径
+    staticPath: '//10.10.19.112:8080/kefu-webim/static',
+    xmppServer:'im-api.jx.zto.com:5280',
+    restServer:'a1.jx.zto.com',
 };
 </script>
 
-<script src='easemob.js'></script>
+	<script src='//10.10.19.112:8080/kefu-webim/easemob.js'></script>
 </body>
 </html>

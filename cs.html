@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href='javascript:;' onclick='easemobim.bind({tenantId: "27801"})'>联系客服</a>
+<script>
+    window.easemobim = window.easemobim || {};
+    easemobim.config = {
+        //访客信息，以下参数支持变量
+        tenantId:'27801',
+        //to:'user5',
+        //appKey:'ebpangyong#chatapp',
+        domain:'//kefu.jx.zto.com',
+        path:'//localhost:8080/kefu-webim',
+        staticPath:'//localhost:8080/kefu-webim/static',
+        xmppServer:'im-api.jx.zto.com:5280',
+        restServer:'a1.jx.zto.com',
+        visitor: {
+            trueName: '黎小冷',
+            qq: '567**34',
+            phone: '188****8888',
+            companyName: '环信',
+            userNickname: '我是黎小冷',
+            description: '描述信息',
+            email: '123456@**.com'
+        },
+    };
+</script>
+<script src='/kefu-webim/easemob.js'></script>
+
+</body>
+</html>

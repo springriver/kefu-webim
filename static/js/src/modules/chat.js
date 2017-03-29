@@ -1030,7 +1030,7 @@
 								case 'up':
 									easemobim.send.style.bottom = 'auto';
 									easemobim.send.style.zIndex = '3';
-									easemobim.send.style.top = '43px';
+									easemobim.send.style.top = '81px';
 									easemobim.imChatBody.style.bottom = '0';
 									easemobim.chatFaceWrapper.style.bottom = 'auto';
 									easemobim.chatFaceWrapper.style.top = 43 + height + 'px';

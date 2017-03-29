@@ -57,7 +57,7 @@ object {
 			width: 100%;
 			top: 0;
 			left: 0;
-    		&:before {
+			&:before {
 				font-size: 60px;
 				color: white;
 				width: 60px;
@@ -323,6 +323,100 @@ object {
 			&.btn-confirm {
 				color: white;
 				background: #1ba8ed;
+			}
+		}
+	}
+}
+@media screen and (min-width:750px){
+	.em-widget-offline {
+		z-index: 3;
+		width: 100%;
+		height: 100%;
+		//background: #fff;
+		background:rgba(0,0,0,0.51);
+		position:fixed;
+		border:1px solid #ededed;
+
+		position: absolute;
+		div {
+			//width: 95%;
+			//max-width: 400px;
+			width: 88%;
+			max-width: 690px;
+			min-height: 514px;
+			background-color: #ededed;
+			margin: 6% auto;
+
+
+			h3,
+			p,
+			input,
+			button,
+			textarea {
+				display: block;
+				font-size: 14px;
+				font-weight: normal;
+				width: 100%;
+				margin: 10px 0;
+			}
+			input,
+			textarea {
+				border: 1px solid #D8D9DA;
+				border-radius: 4px;
+				padding: 10px;
+				box-sizing: border-box;
+			}
+			h3 {
+				//margin-top: 15px;
+				height: 4.1em;
+				text-align: center;
+				line-height: 4.3em;
+				font-size: 1.14em;
+				color: #666666;
+				background-color: #fff;
+				position: relative;
+			}
+			input {
+				//height: 36px;
+				height:46px;
+				color: #666666;
+				font-size:1.14em;
+				padding-left: 1.5em;
+				width:12.58em;
+				float: left;
+				margin-left: 2.14em;
+				margin-top: 2.4em;
+			}
+			textarea {
+				//height: 100px;
+				width: 90.4%;
+				height: 15em;
+				margin: 2.4em auto 0;
+				resize: none;
+			}
+			button {
+				width: 100px;
+				height: 36px;
+				border-radius: 4px;
+				border: none;
+				font-size: 14px;
+				cursor: pointer;
+			}
+			.btn-cancel {
+				float: left;
+				//background-color: white;
+				//border: 1px solid #D8D9DA;
+				//color: #999;
+				margin-left:15%;
+				background-color:#dedede;
+				color:#666666;
+				margin-top: 7%
+			}
+			.btn-ok {
+				float: right;
+				margin-right:15%;
+				color: white;
+				margin-top: 7%
 			}
 		}
 	}

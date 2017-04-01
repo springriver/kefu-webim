@@ -99,25 +99,31 @@
 			}
 		}
 
-		iframe = easemobim.tenants[cacheKeyName];
+		//iframe = easemobim.tenants[cacheKeyName];
 
-		if (iframe) {
-			iframe.open();
-		}
-		else {
-			reset();
-			utils.extend(_config, config);
+		//if (iframe) {
+		//  //	iframe.open();
+		//}
+		//else {
 
-			if (!_config.tenantId) {
-				console.warn('未指定tenantId!');
-				return;
-			}
-
-			iframe = easemobim.Iframe(_config);
-			easemobim.tenants[cacheKeyName] = iframe;
-			iframe.set(_config, utils.isMobile ? null : iframe.open);
+//聊天窗口已经创建则直接打开，这样存在一个问题，如果更换了 extMsg 的内容会不起作用。
+//所以暂时将iframe移除，每次调用都创建新的iframe。
+		for (var c = 0; c < document.getElementsByTagName('iframe').length; c++) {
+			document.getElementsByTagName('iframe')[c].remove();
 		}
 
+		reset();
+		utils.extend(_config, config);
+
+		if (!_config.tenantId) {
+			console.warn('未指定tenantId!');
+			return;
+		}
+
+		iframe = easemobim.Iframe(_config);
+		easemobim.tenants[cacheKeyName] = iframe;
+		iframe.set(_config, utils.isMobile ? null : iframe.open);
+		//}
 
 		if (utils.isMobile) {
 			var prefix = (_config.tenantId || '') + (_config.emgroup || '');
